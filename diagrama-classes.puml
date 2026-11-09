@@ -1,0 +1,141 @@
+@startuml
+title Diagrama de classes - pacote model (Pacotão) - versão 2
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+' ===== Enums =====
+enum StatusLote {
+  MONTAGEM
+  EM_ROTA
+  CONCLUIDO
+}
+
+enum StatusEncomenda {
+  NO_CD
+  EM_ROTA
+  ENTREGUE
+  FALHA
+}
+
+enum TipoEvento {
+  EM_ROTA
+  AVISO_ENVIADO
+  ENTREGUE
+  FALHA
+}
+
+' ===== Centro de distribuição (console Python) =====
+class CentroDistribuicao {
+  - Long cdCentro
+  - String nmCentro
+  - String dsEndereco
+  - Double vlLatitude
+  - Double vlLongitude
+}
+
+class Regiao {
+  - Long cdRegiao
+  - String nmRegiao
+}
+
+' ===== Área do entregador (com login) =====
+class Entregador {
+  - Long cdEntregador
+  - String nmEntregador
+  - String dsEmail
+  - String dsSenhaHash
+  - String nrTelefone
+}
+
+class Lote {
+  - Long cdLote
+  - Long cdCentro
+  - Long cdEntregador
+  - String codigoQr
+  - StatusLote status
+  - LocalDateTime dtCriacao
+  - LocalDateTime dtInicioRota
+  - Double vlLatitudeAtual
+  - Double vlLongitudeAtual
+}
+
+' ===== Área do cliente (com login) =====
+class Cliente {
+  - Long cdCliente
+  - Long cdRegiao
+  - String nmCliente
+  - String dsEmail
+  - String dsSenhaHash
+  - String nrWhatsapp
+  - String dsEndereco
+  - Double vlLatitude
+  - Double vlLongitude
+}
+
+class Encomenda {
+  - Long cdEncomenda
+  - Long cdCentro
+  - Long cdLote
+  - Long cdCliente
+  - String codigoRastreio
+  - Integer nrPosicaoRota
+  - StatusEncomenda status
+}
+
+class EventoRastreio {
+  - Long cdEvento
+  - Long cdEncomenda
+  - TipoEvento tipo
+  - LocalDateTime dtEvento
+}
+
+' ===== Relacionamentos =====
+CentroDistribuicao "1" --> "0..*" Lote : possui
+CentroDistribuicao "1" --> "0..*" Encomenda : recebe
+Regiao "1" --> "0..*" Cliente : abrange
+Entregador "*" -- "*" Regiao : atua em
+Entregador "1" --> "0..*" Lote : percorre
+Lote "1" --> "0..20" Encomenda : contém
+Cliente "1" --> "0..*" Encomenda : recebe
+Encomenda "1" --> "0..*" EventoRastreio : gera
+
+Lote ..> StatusLote
+Encomenda ..> StatusEncomenda
+EventoRastreio ..> TipoEvento
+
+' ===== Notas =====
+note right of Lote
+  O Java cria o lote junto com a
+  atribuição: cada entregador tem
+  no máximo 20 entregas ativas.
+  codigoQr é o texto que vira o QR
+  (a imagem é gerada pelo Python).
+  vlLatitudeAtual e vlLongitudeAtual
+  guardam a posição do entregador
+  para o mapa do cliente.
+end note
+
+note bottom of Encomenda
+  Ao ser bipada no CD, o Java escolhe
+  o entregador da região do cliente e
+  já liga a encomenda ao lote dele
+  (cdLote preenchido na criação).
+  nrPosicaoRota só é calculado quando
+  o entregador lê o QR.
+end note
+
+note bottom of Entregador
+  dsSenhaHash guarda o hash da senha
+  (nunca a senha em texto) e não
+  aparece em nenhuma resposta da API.
+  O mesmo vale para Cliente.
+end note
+
+note bottom of Regiao
+  Entregador x Regiao é N:N.
+  No banco vira a tabela associativa
+  TB_ENTREGADOR_REGIAO.
+end note
+
+@enduml
