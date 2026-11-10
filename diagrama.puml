@@ -23,6 +23,25 @@ enum TipoEvento {
   FALHA
 }
 
+enum TipoUsuario {
+  ENTREGADOR
+  CLIENTE
+}
+
+enum StatusEntregador {
+  DISPONIVEL
+  INDISPONIVEL
+}
+
+
+abstract class Usuario {
+  - String dsEmail
+  - String dsSenhaHash
+  --
+  + {abstract} int getId()
+  + {abstract} String getNome()
+  + {abstract} TipoUsuario getTipo()
+}
 
 class CentroDistribuicao {
   - int cdCentro
@@ -41,9 +60,13 @@ class Regiao {
 class Entregador {
   - int cdEntregador
   - String nmEntregador
-  - String dsEmail
-  - String dsSenhaHash
   - String nrTelefone
+  - StatusEntregador status
+  --
+  + int getId()
+  + String getNome()
+  + TipoUsuario getTipo()
+  + boolean estaDisponivel()
 }
 
 class Lote {
@@ -66,16 +89,18 @@ class Cliente {
   - int cdCliente
   - int cdRegiao
   - String nmCliente
-  - String dsEmail
-  - String dsSenhaHash
   - String nrWhatsapp
   - String dsEndereco
   - Double vlLatitude
   - Double vlLongitude
+  --
+  + int getId()
+  + String getNome()
+  + TipoUsuario getTipo()
 }
 
 class Encomenda {
-  {static} - int PARADAS_AVISO
+  {static} - int PARADAS_AVISO = 3
   - int cdEncomenda
   - int cdCentro
   - int cdLote
@@ -99,6 +124,9 @@ class EventoRastreio {
   + boolean ehAviso()
 }
 
+Usuario <|-- Entregador
+Usuario <|-- Cliente
+
 CentroDistribuicao "1" --> "0..*" Lote : possui
 CentroDistribuicao "1" --> "0..*" Encomenda : recebe
 Regiao "1" --> "0..*" Cliente : abrange
@@ -111,6 +139,8 @@ Encomenda "1" --> "0..*" EventoRastreio : gera
 Lote ..> StatusLote
 Encomenda ..> StatusEncomenda
 EventoRastreio ..> TipoEvento
+Usuario ..> TipoUsuario
+Entregador ..> StatusEntregador
 
 note right of Lote
   O Java cria o lote junto com a
@@ -125,20 +155,31 @@ end note
 
 note bottom of Encomenda
   Ao ser bipada no CD, o Java escolhe
-  o entregador da região do cliente e
-  já liga a encomenda ao lote dele
-  (cdLote preenchido na criação).
-  nrPosicaoRota só é calculado quando
-  o entregador lê o QR.
+  um entregador da região do cliente
+  que esteja DISPONIVEL, fora de rota
+  e com vaga, e já liga a encomenda
+  ao lote dele (cdLote preenchido na
+  criação). nrPosicaoRota só é
+  calculado quando o entregador lê o QR.
   PARADAS_AVISO é o limite de paradas
   restantes para avisar o cliente.
 end note
 
 note bottom of Entregador
-  dsSenhaHash guarda o hash da senha
-  (nunca a senha em texto) e não
-  aparece em nenhuma resposta da API.
-  O mesmo vale para Cliente.
+  O entregador nasce INDISPONIVEL e
+  ativa o perfil quando estiver pronto
+  para fazer entregas. Não pode ficar
+  indisponível com uma rota em andamento.
+end note
+
+note right of Usuario
+  Entregador e Cliente herdam e-mail
+  e hash da senha. dsSenhaHash guarda
+  o hash (nunca a senha em texto) e
+  não aparece em nenhuma resposta da
+  API. No banco continuam sendo duas
+  tabelas separadas, cada uma com
+  suas colunas de e-mail e senha.
 end note
 
 note bottom of Regiao
