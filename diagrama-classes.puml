@@ -1,10 +1,8 @@
 @startuml
-title Diagrama de classes - pacote model (Pacotão) - versão 2
 
 skinparam classAttributeIconSize 0
 skinparam shadowing false
 
-' ===== Enums =====
 enum StatusLote {
   MONTAGEM
   EM_ROTA
@@ -25,7 +23,7 @@ enum TipoEvento {
   FALHA
 }
 
-' ===== Centro de distribuição (console Python) =====
+
 class CentroDistribuicao {
   - Long cdCentro
   - String nmCentro
@@ -39,7 +37,7 @@ class Regiao {
   - String nmRegiao
 }
 
-' ===== Área do entregador (com login) =====
+
 class Entregador {
   - Long cdEntregador
   - String nmEntregador
@@ -60,7 +58,6 @@ class Lote {
   - Double vlLongitudeAtual
 }
 
-' ===== Área do cliente (com login) =====
 class Cliente {
   - Long cdCliente
   - Long cdRegiao
@@ -90,7 +87,6 @@ class EventoRastreio {
   - LocalDateTime dtEvento
 }
 
-' ===== Relacionamentos =====
 CentroDistribuicao "1" --> "0..*" Lote : possui
 CentroDistribuicao "1" --> "0..*" Encomenda : recebe
 Regiao "1" --> "0..*" Cliente : abrange
@@ -104,7 +100,6 @@ Lote ..> StatusLote
 Encomenda ..> StatusEncomenda
 EventoRastreio ..> TipoEvento
 
-' ===== Notas =====
 note right of Lote
   O Java cria o lote junto com a
   atribuição: cada entregador tem
