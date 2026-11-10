@@ -1,13 +1,3 @@
--- =====================================================================
--- Pacotão - criação das tabelas e sequences (Oracle)
--- Ordem: primeiro as tabelas que não dependem de ninguém, depois as
--- que apontam para elas (por causa das chaves estrangeiras).
--- =====================================================================
-
-
--- ---------------------------------------------------------------------
--- 1) Tabelas sem dependência
--- ---------------------------------------------------------------------
 
 CREATE TABLE TB_REGIAO (
     CD_REGIAO   NUMBER(10)    NOT NULL,
@@ -24,7 +14,6 @@ CREATE TABLE TB_CENTRO_DISTRIBUICAO (
     CONSTRAINT PK_CENTRO PRIMARY KEY (CD_CENTRO)
 );
 
--- DS_SENHA_HASH guarda o hash (BCrypt tem 60 caracteres), nunca a senha.
 CREATE TABLE TB_ENTREGADOR (
     CD_ENTREGADOR  NUMBER(10)    NOT NULL,
     NM_ENTREGADOR  VARCHAR2(100) NOT NULL,
@@ -35,13 +24,6 @@ CREATE TABLE TB_ENTREGADOR (
     CONSTRAINT UK_ENTREGADOR_EMAIL UNIQUE (DS_EMAIL)
 );
 
-
--- ---------------------------------------------------------------------
--- 2) Tabelas que dependem das anteriores
--- ---------------------------------------------------------------------
-
--- Associativa do N:N entre entregador e região.
--- A chave primária é composta: o mesmo par não se repete.
 CREATE TABLE TB_ENTREGADOR_REGIAO (
     CD_ENTREGADOR  NUMBER(10) NOT NULL,
     CD_REGIAO      NUMBER(10) NOT NULL,
@@ -68,8 +50,6 @@ CREATE TABLE TB_CLIENTE (
         REFERENCES TB_REGIAO (CD_REGIAO)
 );
 
--- O lote já nasce com o entregador dono dele (CD_ENTREGADOR NOT NULL).
--- DT_INICIO_ROTA e as coordenadas atuais ficam nulas até a rota começar.
 CREATE TABLE TB_LOTE (
     CD_LOTE            NUMBER(10)   NOT NULL,
     CD_CENTRO          NUMBER(10)   NOT NULL,
@@ -89,13 +69,6 @@ CREATE TABLE TB_LOTE (
     CONSTRAINT CK_LOTE_STATUS CHECK (DS_STATUS IN ('MONTAGEM', 'EM_ROTA', 'CONCLUIDO'))
 );
 
-
--- ---------------------------------------------------------------------
--- 3) Encomenda e evento de rastreio
--- ---------------------------------------------------------------------
-
--- A encomenda já entra com lote (o Java escolhe o entregador e o lote
--- antes de gravar). NR_POSICAO_ROTA fica nulo até o QR ser lido.
 CREATE TABLE TB_ENCOMENDA (
     CD_ENCOMENDA        NUMBER(10)   NOT NULL,
     CD_CENTRO           NUMBER(10)   NOT NULL,
@@ -127,13 +100,6 @@ CREATE TABLE TB_EVENTO_RASTREIO (
     CONSTRAINT CK_EVENTO_TIPO CHECK (DS_TIPO IN ('EM_ROTA', 'AVISO_ENVIADO', 'ENTREGUE', 'FALHA'))
 );
 
-
--- ---------------------------------------------------------------------
--- 4) Sequences (uma por tabela com chave própria)
--- O INSERT do Java usa SQ_TB_X.NEXTVAL para gerar o código.
--- TB_ENTREGADOR_REGIAO não tem sequence: a chave é composta.
--- ---------------------------------------------------------------------
-
 CREATE SEQUENCE SQ_TB_REGIAO              START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE SQ_TB_CENTRO_DISTRIBUICAO START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE SQ_TB_ENTREGADOR          START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
@@ -143,29 +109,6 @@ CREATE SEQUENCE SQ_TB_ENCOMENDA           START WITH 1 INCREMENT BY 1 NOCACHE NO
 CREATE SEQUENCE SQ_TB_EVENTO_RASTREIO     START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
 
 
--- ---------------------------------------------------------------------
--- 5) Dados mínimos para testar (opcional)
--- O hash abaixo é só um texto de exemplo: não serve para fazer login.
--- ---------------------------------------------------------------------
-
-INSERT INTO TB_REGIAO (CD_REGIAO, NM_REGIAO) VALUES (SQ_TB_REGIAO.NEXTVAL, 'Zona Sul');
-INSERT INTO TB_REGIAO (CD_REGIAO, NM_REGIAO) VALUES (SQ_TB_REGIAO.NEXTVAL, 'Zona Leste');
-
-INSERT INTO TB_CENTRO_DISTRIBUICAO (CD_CENTRO, NM_CENTRO, DS_ENDERECO, VL_LATITUDE, VL_LONGITUDE)
-VALUES (SQ_TB_CENTRO_DISTRIBUICAO.NEXTVAL, 'CD Central', 'Av. Exemplo, 1000 - São Paulo', -23.550000, -46.633000);
-
-INSERT INTO TB_ENTREGADOR (CD_ENTREGADOR, NM_ENTREGADOR, DS_EMAIL, DS_SENHA_HASH, NR_TELEFONE)
-VALUES (SQ_TB_ENTREGADOR.NEXTVAL, 'Carlos Teste', 'carlos@teste.com', 'hash-de-teste-nao-usar', '11999990000');
-
-INSERT INTO TB_ENTREGADOR_REGIAO (CD_ENTREGADOR, CD_REGIAO)
-VALUES ((SELECT CD_ENTREGADOR FROM TB_ENTREGADOR WHERE DS_EMAIL = 'carlos@teste.com'),
-        (SELECT CD_REGIAO FROM TB_REGIAO WHERE NM_REGIAO = 'Zona Sul'));
-
-INSERT INTO TB_CLIENTE (CD_CLIENTE, CD_REGIAO, NM_CLIENTE, DS_EMAIL, DS_SENHA_HASH, NR_WHATSAPP, DS_ENDERECO, VL_LATITUDE, VL_LONGITUDE)
-VALUES (SQ_TB_CLIENTE.NEXTVAL,
-        (SELECT CD_REGIAO FROM TB_REGIAO WHERE NM_REGIAO = 'Zona Sul'),
-        'Ana Teste', 'ana@teste.com', 'hash-de-teste-nao-usar', '11988880000',
-        'Rua Exemplo, 100 - São Paulo', -23.560000, -46.640000);
 
 COMMIT;
 
