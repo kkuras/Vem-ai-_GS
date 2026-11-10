@@ -25,7 +25,7 @@ enum TipoEvento {
 
 
 class CentroDistribuicao {
-  - Long cdCentro
+  - int cdCentro
   - String nmCentro
   - String dsEndereco
   - Double vlLatitude
@@ -33,13 +33,13 @@ class CentroDistribuicao {
 }
 
 class Regiao {
-  - Long cdRegiao
+  - int cdRegiao
   - String nmRegiao
 }
 
 
 class Entregador {
-  - Long cdEntregador
+  - int cdEntregador
   - String nmEntregador
   - String dsEmail
   - String dsSenhaHash
@@ -47,20 +47,24 @@ class Entregador {
 }
 
 class Lote {
-  - Long cdLote
-  - Long cdCentro
-  - Long cdEntregador
+  - int cdLote
+  - int cdCentro
+  - int cdEntregador
   - String codigoQr
   - StatusLote status
   - LocalDateTime dtCriacao
   - LocalDateTime dtInicioRota
   - Double vlLatitudeAtual
   - Double vlLongitudeAtual
+  --
+  + boolean podeIniciarRota()
+  + boolean estaEmRota()
+  + boolean temPosicaoAtual()
 }
 
 class Cliente {
-  - Long cdCliente
-  - Long cdRegiao
+  - int cdCliente
+  - int cdRegiao
   - String nmCliente
   - String dsEmail
   - String dsSenhaHash
@@ -71,20 +75,28 @@ class Cliente {
 }
 
 class Encomenda {
-  - Long cdEncomenda
-  - Long cdCentro
-  - Long cdLote
-  - Long cdCliente
+  {static} - int PARADAS_AVISO
+  - int cdEncomenda
+  - int cdCentro
+  - int cdLote
+  - int cdCliente
   - String codigoRastreio
   - Integer nrPosicaoRota
   - StatusEncomenda status
+  --
+  + boolean estaAtiva()
+  + boolean foiEntregue()
+  + int calcularParadasRestantes(int entregasConcluidas)
+  + boolean deveAvisarCliente(int paradasRestantes)
 }
 
 class EventoRastreio {
-  - Long cdEvento
-  - Long cdEncomenda
+  - int cdEvento
+  - int cdEncomenda
   - TipoEvento tipo
   - LocalDateTime dtEvento
+  --
+  + boolean ehAviso()
 }
 
 CentroDistribuicao "1" --> "0..*" Lote : possui
@@ -118,6 +130,8 @@ note bottom of Encomenda
   (cdLote preenchido na criação).
   nrPosicaoRota só é calculado quando
   o entregador lê o QR.
+  PARADAS_AVISO é o limite de paradas
+  restantes para avisar o cliente.
 end note
 
 note bottom of Entregador
@@ -131,6 +145,12 @@ note bottom of Regiao
   Entregador x Regiao é N:N.
   No banco vira a tabela associativa
   TB_ENTREGADOR_REGIAO.
+end note
+
+note as NotaGeral
+  Getters, setters e construtores
+  são gerados pelo Lombok e não
+  aparecem no diagrama.
 end note
 
 @enduml
