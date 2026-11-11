@@ -57,7 +57,7 @@ class Regiao {
 }
 
 
-class Entregador {
+class Entregador{
   - int cdEntregador
   - String nmEntregador
   - String nrTelefone
