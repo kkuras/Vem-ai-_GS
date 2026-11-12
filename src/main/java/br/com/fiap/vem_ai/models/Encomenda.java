@@ -21,18 +21,21 @@ public class Encomenda {
     private StatusEncomenda status;
 
     public boolean estaAtiva() {
-        return true;
+        return status != StatusEncomenda.ENTREGUE && status != StatusEncomenda.FALHA;
     }
 
     public boolean foiEntregue() {
-        return true;
+        return status == StatusEncomenda.ENTREGUE;
     }
 
     public int calcularParadasRestantes(int entregasConcluidas) {
-        return entregasConcluidas;
+        if (nrPosicaoRota == null) {
+            throw new IllegalStateException("A encomenda ainda não tem posição na rota");
+        }
+        return Math.max(0, nrPosicaoRota - entregasConcluidas);
     }
 
     public boolean deveAvisarCliente(int paradasRestantes) {
-        return true;
+        return paradasRestantes == PARADAS_AVISO;
     }
 }

@@ -20,6 +20,6 @@ public class EventoRastreio {
     private LocalDateTime dtEvento;
 
     public boolean ehAviso() {
-        return true;
+        return tipo == TipoEvento.AVISO_ENVIADO;
     }
 }

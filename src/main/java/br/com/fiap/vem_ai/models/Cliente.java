@@ -22,16 +22,16 @@ public class Cliente extends Usuario{
 
     @Override
     public int getId() {
-        return 0;
+        return cdCliente;
     }
 
     @Override
     public String getNome() {
-        return "";
+        return nmCliente;
     }
 
     @Override
     public TipoUsuario getTipo() {
-        return null;
+        return TipoUsuario.CLIENTE;
     }
 }

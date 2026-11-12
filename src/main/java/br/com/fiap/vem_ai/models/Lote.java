@@ -21,19 +21,19 @@ public class Lote {
     private StatusLote status;
     private LocalDateTime dtCriacao;
     private LocalDateTime dtInicioRota;
-    private double vlLatitudeAtual;
-    private double vlLongitudeAtual;
+    private Double vlLatitudeAtual;
+    private Double vlLongitudeAtual;
 
     public boolean podeIniciarRota() {
-        return true;
+        return status == StatusLote.MONTAGEM;
     }
 
     public boolean estaEmRota() {
-        return true;
+        return status == StatusLote.EM_ROTA;
     }
 
     public boolean temPosicaoAtual() {
-        return true;
+        return vlLatitudeAtual != null && vlLongitudeAtual != null;
     }
 
 }

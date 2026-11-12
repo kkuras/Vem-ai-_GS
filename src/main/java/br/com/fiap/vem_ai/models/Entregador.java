@@ -20,12 +20,12 @@ public class Entregador extends Usuario{
 
     @Override
     public int getId() {
-        return 0;
+        return cdEntregador;
     }
 
     @Override
     public String getNome() {
-        return "";
+        return nmEntregador;
     }
 
     @Override
