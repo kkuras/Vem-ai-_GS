@@ -2,7 +2,15 @@ package br.com.fiap.vem_ai.models;
 
 import br.com.fiap.vem_ai.enums.StatusEntregador;
 import br.com.fiap.vem_ai.enums.TipoUsuario;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Entregador extends Usuario{
 
     private int cdEntregador;

@@ -1,7 +1,15 @@
 package br.com.fiap.vem_ai.models;
 
 import br.com.fiap.vem_ai.enums.StatusEncomenda;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Encomenda {
 
     private static int PARADAS_AVISO = 3;

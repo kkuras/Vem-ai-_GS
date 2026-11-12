@@ -3,7 +3,15 @@ package br.com.fiap.vem_ai.models;
 import br.com.fiap.vem_ai.enums.StatusLote;
 
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Lote {
 
     private int cdLote;
