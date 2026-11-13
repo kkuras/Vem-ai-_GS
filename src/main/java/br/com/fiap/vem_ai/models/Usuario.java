@@ -13,7 +13,7 @@ import lombok.Setter;
 public abstract class Usuario {
 
     private String dsEmail;
-    private String dsSenhaHah;
+    private String dsSenhaHash;
 
     public abstract int getId();
     public abstract String getNome();
