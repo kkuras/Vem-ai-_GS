@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Encomenda {
 
-    private static int PARADAS_AVISO = 3;
+    public static int PARADAS_AVISO = 3;
     private int cdEncomenda;
     private int cdCentro;
     private int cdLote;

@@ -100,7 +100,7 @@ class Cliente {
 }
 
 class Encomenda {
-  {static} - int PARADAS_AVISO = 3
+  {static} + int PARADAS_AVISO = 3
   - int cdEncomenda
   - int cdCentro
   - int cdLote
