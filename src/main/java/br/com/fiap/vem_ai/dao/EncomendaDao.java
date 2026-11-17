@@ -1,6 +1,5 @@
 package br.com.fiap.vem_ai.dao;
 
-import br.com.fiap.vem_ai.config.ConnectionFactory;
 import br.com.fiap.vem_ai.enums.StatusEncomenda;
 import br.com.fiap.vem_ai.models.Encomenda;
 import org.springframework.stereotype.Repository;
