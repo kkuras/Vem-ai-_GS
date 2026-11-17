@@ -1,4 +1,4 @@
-package br.com.fiap.vem_ai.config;
+package br.com.fiap.vem_ai.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

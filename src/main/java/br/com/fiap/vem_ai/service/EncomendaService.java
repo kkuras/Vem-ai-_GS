@@ -1,6 +1,6 @@
 package br.com.fiap.vem_ai.service;
 
-import br.com.fiap.vem_ai.config.ConnectionFactory;
+import br.com.fiap.vem_ai.dao.ConnectionFactory;
 import br.com.fiap.vem_ai.dao.CentroDistribuicaoDao;
 import br.com.fiap.vem_ai.dao.ClienteDao;
 import br.com.fiap.vem_ai.dao.EncomendaDao;
