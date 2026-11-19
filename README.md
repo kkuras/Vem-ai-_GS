@@ -116,7 +116,7 @@ Localmente, copie `.env.exemple` para `.env` e preencha os valores. O `.env` nã
 
 ### Banco de dados
 
-Rode o script `vem ai tabelas.sql` no Oracle para criar as tabelas e as sequences.
+Rode o script `vem_ai_tabelas.sql` no Oracle para criar as tabelas e as sequences.
 
 ### Com Docker
 
